@@ -1,0 +1,12 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="CarTrawler Assessment Suite">
+    <test name="AllTests">
+        <packages>
+            <!-- scan every class under these packages for @Test methods -->
+            <package name="com.cartrawler.assessment.car"/>
+            <package name="com.cartrawler.assessment.util"/>
+            <!-- add other base packages as needed -->
+        </packages>
+    </test>
+
+</suite>
