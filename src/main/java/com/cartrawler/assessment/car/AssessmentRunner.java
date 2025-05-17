@@ -1,5 +1,7 @@
 package com.cartrawler.assessment.car;
 
+import com.cartrawler.assessment.enums.Category;
+import com.cartrawler.assessment.enums.Supplier;
 import com.cartrawler.assessment.util.CarsUtils;
 import com.cartrawler.assessment.view.Display;
 import lombok.extern.slf4j.Slf4j;
@@ -13,17 +15,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.cartrawler.assessment.data.CarDataProvider.loadAllCars;
-import static com.cartrawler.assessment.util.CarsUtils.categoryOf;
+import static com.cartrawler.assessment.enums.Category.fromSipp;
 import static com.cartrawler.assessment.util.CarsUtils.filterFullAboveMedianPrice;
 import static com.cartrawler.assessment.util.CarsUtils.removeDuplicates;
 
 @Slf4j
 public class AssessmentRunner {
     // TODO: make this an enum?
-    public static final List<String> CATEGORIES = List.of("Mini", "Economy", "Compact", "Other");
-    public static final Set<String> CORPORATE_SUPPLIERS = Set.of(
-            "AVIS", "BUDGET", "ENTERPRISE", "FIREFLY", "HERTZ", "SIXT", "THRIFTY"
-    );
+    private static final List<Category> CATEGORIES = List.of(Category.values());
 
     /**
      * Processes the given car results by removing duplicates,
@@ -36,22 +35,22 @@ public class AssessmentRunner {
 
         // 2. Partition corporate vs non-corporate
         List<CarResult> corporate = uniqueCars.stream()
-                .filter(car -> CORPORATE_SUPPLIERS.contains(car.getSupplierName()))
+                .filter(car -> Supplier.isCorporate(car.getSupplierName()))
                 .toList();
         List<CarResult> nonCorporate = uniqueCars.stream()
-                .filter(car -> !CORPORATE_SUPPLIERS.contains(car.getSupplierName()))
+                .filter(car -> !Supplier.isCorporate(car.getSupplierName()))
                 .toList();
 
         // 3. Sort each partition by category and cost
-        Stream<CarResult> sortedCorporate = CATEGORIES.stream()
+        Stream<CarResult> sortedCorporate   = CATEGORIES.stream()
                 .flatMap(cat -> corporate.stream()
-                        .filter(car -> categoryOf(car).equals(cat))
-                        .sorted(Comparator.comparingDouble(CarResult::getRentalCost)));
-        Stream<CarResult> sortedNonCorporate = CATEGORIES.stream()
-                .flatMap(cat -> nonCorporate.stream()
-                        .filter(car -> categoryOf(car).equals(cat))
+                        .filter(car -> fromSipp(car.getSippCode()) == cat)
                         .sorted(Comparator.comparingDouble(CarResult::getRentalCost)));
 
+        Stream<CarResult> sortedNonCorporate = CATEGORIES.stream()
+                .flatMap(cat -> nonCorporate.stream()
+                        .filter(car -> fromSipp(car.getSippCode()) == cat)
+                        .sorted(Comparator.comparingDouble(CarResult::getRentalCost)));
         // 4. Combine and return
         return Stream.concat(sortedCorporate, sortedNonCorporate)
                 .collect(Collectors.toList());

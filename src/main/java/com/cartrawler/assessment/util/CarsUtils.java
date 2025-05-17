@@ -1,6 +1,8 @@
 package com.cartrawler.assessment.util;
 
 import com.cartrawler.assessment.car.CarResult;
+import com.cartrawler.assessment.enums.Category;
+import com.cartrawler.assessment.enums.Supplier;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +14,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import static com.cartrawler.assessment.car.AssessmentRunner.CORPORATE_SUPPLIERS;
+
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CarsUtils {
@@ -44,12 +45,8 @@ public class CarsUtils {
     /**
      * Derives a SIPP category label for a CarResult based on the first SIPP character.
      */
-    public static String categoryOf(CarResult car) {
-        char c = car.getSippCode().charAt(0);
-        return c == 'M' ? "Mini"
-                : c == 'E' ? "Economy"
-                : c == 'C' ? "Compact"
-                : "Other";
+    public static Category categoryOf(CarResult car) {
+        return Category.fromSipp(car.getSippCode());
     }
 
     /**
@@ -61,16 +58,13 @@ public class CarsUtils {
      */
     public static List<CarResult> filterFullAboveMedianPrice(List<CarResult> cars) {
 
-        // Partition by corporate flag once
         List<CarResult> corporate = cars.stream()
-                .filter(car -> CORPORATE_SUPPLIERS
-                        .contains(car.getSupplierName()))
+                .filter(car -> Supplier.isCorporate(car.getSupplierName()))
+                .toList();
+        List<CarResult> nonCorporate = cars.stream()
+                .filter(car -> !Supplier.isCorporate(car.getSupplierName()))
                 .toList();
 
-        List<CarResult> nonCorporate = cars.stream()
-                .filter(car -> !CORPORATE_SUPPLIERS
-                        .contains(car.getSupplierName()))
-                .toList();
 
         double medianCorporate = corporate.isEmpty()
                 ? Double.POSITIVE_INFINITY
@@ -88,12 +82,10 @@ public class CarsUtils {
         return cars.stream()
                 .filter(car -> {
                     boolean fullFull = car.getFuelPolicy() == CarResult.FuelPolicy.FULLFULL;
-                    boolean corporateFlag = CORPORATE_SUPPLIERS
-                            .contains(car.getSupplierName());
-                    double threshold = corporateFlag ? medianCorporate
-                            : medianNonCorporate;
+                    boolean corporateFlag = Supplier.isCorporate(car.getSupplierName());
+                    double threshold = corporateFlag ? medianCorporate : medianNonCorporate;
                     boolean isRemoved = fullFull && car.getRentalCost() > threshold;
-                    if (isRemoved){
+                    if (isRemoved) {
                         log.atInfo()
                                 .addArgument(car)
                                 .log("{} will be skipped");

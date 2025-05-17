@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 import java.util.List;
 
 import static com.cartrawler.assessment.car.CarResult.FuelPolicy.FULLFULL;
+import static com.cartrawler.assessment.enums.Category.*;
 import static com.cartrawler.assessment.util.CarsUtils.categoryOf;
 import static com.cartrawler.assessment.util.CarsUtils.compositeKey;
 import static com.cartrawler.assessment.util.CarsUtils.filterFullAboveMedianPrice;
@@ -35,10 +36,10 @@ public class CarsUtilsTest {
 
     @Test
     public void testCategoryOf() {
-        assertThat(categoryOf(new CarResult("", "", "MDMR", 0, FULLFULL))).isEqualTo("Mini");
-        assertThat(categoryOf(new CarResult("", "", "EDMR", 0, FULLFULL))).isEqualTo("Economy");
-        assertThat(categoryOf(new CarResult("", "", "CDMR", 0, FULLFULL))).isEqualTo("Compact");
-        assertThat(categoryOf(new CarResult("", "", "XDMR", 0, FULLFULL))).isEqualTo("Other");
+        assertThat(categoryOf(new CarResult("", "", "MDMR", 0, FULLFULL))).isEqualTo(MINI);
+        assertThat(categoryOf(new CarResult("", "", "EDMR", 0, FULLFULL))).isEqualTo(ECONOMY);
+        assertThat(categoryOf(new CarResult("", "", "CDMR", 0, FULLFULL))).isEqualTo(COMPACT);
+        assertThat(categoryOf(new CarResult("", "", "XDMR", 0, FULLFULL))).isEqualTo(OTHER);
     }
 
     @Test
