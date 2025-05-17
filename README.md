@@ -37,21 +37,21 @@ The goal is to process a static dataset of car results to produce a clean, order
 * **Prioritize** corporate supplier offers ahead of non‑corporate.
 * **Organize** by SIPP category in the fixed sequence: Mini → Economy → Compact → Other.
 * **Order** each category by the lowest to highest rental cost.
+* **(Optional stretch)** Remove **FULLFULL** cars whose rental cost exceeds the median price of their respective corporate or non-corporate segment.
 
 ## Decision Making Process
 
 * **Duplicate Removal:**  
-Leveraging `LinkedHashMap<String, CarResult>` keyed by a composite string (`supplier|description|sipp|fuelPolicy`) to both **deduplicate** and **preserve insertion order** for the first-seen entries.
+  Leveraging `LinkedHashMap<String, CarResult>` keyed by a composite string (`supplier|description|sipp|fuelPolicy`) to both **deduplicate** and **preserve insertion order** of the entries.
 
 * **Corporate Segmentation:**  
-A predefined `Set<String>` of corporate supplier names allows an efficient `filter(...)` to split the dataset.
+  The `Supplier` **enum** exposes an `isCorporate(String)` helper; it filters on that predicate to split corporate vs non-corporate suppliers.
 
 * **Category Grouping:**  
-A simple `Function<CarResult,String>` maps the first character of the SIPP code (`M`, `E`, `C`, others) to category names.  
-Grouping is done by streaming over a fixed category list so that empty categories still respect the overall order.
+  The `Category` **enum** exposes a `fromSipp(sippCode)` (an enum method) to map the first character of the SIPP code (`M`, `E`, `C`, others) to the category names. Grouping is done by streaming over a fixed category list so that empty categories still respect the overall order.
 
 * **Cost Sorting:**  
- We apply `sorted(Comparator.comparingDouble(CarResult::getRentalCost))` within each category to ensure ascending cost order.
+  `sorted(Comparator.comparingDouble(CarResult::getRentalCost))` it's used to ensure ascending cost order within each category.
 
 * **Final Assembly:**  
-By concatenating the sorted streams for corporate and non‑corporate, we guarantee the overall ordering of the final output.
+  By concatenating the sorted streams for corporate and non-corporate, we guarantee the overall ordering of the final output.
