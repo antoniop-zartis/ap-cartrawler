@@ -1,8 +1,10 @@
 package com.cartrawler.assessment.car;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@EqualsAndHashCode(of = {"supplierName","description","sippCode","fuelPolicy"})
 public class CarResult {
     private final String description;
     private final String supplierName;
@@ -12,7 +14,7 @@ public class CarResult {
 
 	public enum FuelPolicy {
         FULLFULL,
-        FULLEMPTY};
+        FULLEMPTY}
 
     public CarResult(String description, String supplierName, String sipp, double cost, FuelPolicy fuelPolicy) {
         this.description = description;
@@ -20,26 +22,6 @@ public class CarResult {
         this.sippCode = sipp;
         this.rentalCost = cost;
         this.fuelPolicy = fuelPolicy;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public String getSupplierName() {
-        return this.supplierName;
-    }
-
-    public String getSippCode() {
-        return this.sippCode;
-    }
-
-    public double getRentalCost() {
-        return this.rentalCost;
-    }
-
-    public FuelPolicy getFuelPolicy() {
-        return this.fuelPolicy;
     }
 
     public String toString() {

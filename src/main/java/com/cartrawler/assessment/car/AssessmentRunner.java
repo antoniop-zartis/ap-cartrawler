@@ -2,15 +2,12 @@ package com.cartrawler.assessment.car;
 
 import com.cartrawler.assessment.enums.Category;
 import com.cartrawler.assessment.enums.Supplier;
-import com.cartrawler.assessment.util.CarsUtils;
 import com.cartrawler.assessment.view.Display;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,7 +18,6 @@ import static com.cartrawler.assessment.util.CarsUtils.removeDuplicates;
 
 @Slf4j
 public class AssessmentRunner {
-    // TODO: make this an enum?
     private static final List<Category> CATEGORIES = List.of(Category.values());
 
     /**
@@ -29,9 +25,9 @@ public class AssessmentRunner {
      * segmenting corporate vs non-corporate, grouping by SIPP category,
      * and sorting by rental cost within each category.
      */
-    public static List<CarResult> process(Set<CarResult> cars) {
+    public static List<CarResult> process(List<CarResult> cars) {
         // 1. Remove duplicates
-        List<CarResult> uniqueCars = removeDuplicates(cars, CarsUtils::compositeKey);
+        List<CarResult> uniqueCars = removeDuplicates(cars);
 
         // 2. Partition corporate vs non-corporate
         List<CarResult> corporate = uniqueCars.stream()
@@ -58,7 +54,7 @@ public class AssessmentRunner {
 
     public static void process() {
         Display display = new Display();
-        HashSet<CarResult> cars = loadAllCars();
+        List<CarResult> cars = loadAllCars();
         log.atInfo()
                 .addArgument(cars.size())
                 .log("Original list size: {}");

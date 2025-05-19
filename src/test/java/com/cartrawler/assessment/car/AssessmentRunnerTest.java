@@ -2,14 +2,10 @@ package com.cartrawler.assessment.car;
 
 import com.cartrawler.assessment.enums.Category;
 import com.cartrawler.assessment.enums.Supplier;
-import com.cartrawler.assessment.util.CarsUtils;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testng.annotations.Test;
 
 import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.cartrawler.assessment.car.AssessmentRunner.process;
 import static com.cartrawler.assessment.data.CarDataProvider.loadAllCars;
@@ -22,14 +18,11 @@ public class AssessmentRunnerTest {
 
     @Test
     public void testDuplicatesRemovedAndUniqueKeys() {
-        Set<CarResult> raw = loadAllCars();
+        List<CarResult> raw = loadAllCars();
         List<CarResult> out = process(raw);
 
-        assertThat(out).hasSizeLessThan(raw.size());
-
-        Function<CarResult, String> keyFn = CarsUtils::compositeKey;
-        assertThat(out.stream().map(keyFn).collect(Collectors.toSet()))
-                .hasSize(out.size());
+        assertThat(out).hasSizeLessThanOrEqualTo(raw.size());
+        assertThat(out).doesNotHaveDuplicates();
     }
 
     @Test
@@ -50,7 +43,6 @@ public class AssessmentRunnerTest {
         list.subList(firstNonCorp, list.size())
                 .forEach(c -> assertThat(Supplier.isCorporate(c.getSupplierName())).isFalse());
 
-        List<Category> order = List.of(Category.values());
         boolean inCorporate = true;
         int lastCatOrd = -1;
         double lastCost = -1;

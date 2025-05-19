@@ -6,9 +6,11 @@ import org.testng.annotations.Test;
 import java.util.List;
 
 import static com.cartrawler.assessment.car.CarResult.FuelPolicy.FULLFULL;
-import static com.cartrawler.assessment.enums.Category.*;
+import static com.cartrawler.assessment.enums.Category.COMPACT;
+import static com.cartrawler.assessment.enums.Category.ECONOMY;
+import static com.cartrawler.assessment.enums.Category.MINI;
+import static com.cartrawler.assessment.enums.Category.OTHER;
 import static com.cartrawler.assessment.util.CarsUtils.categoryOf;
-import static com.cartrawler.assessment.util.CarsUtils.compositeKey;
 import static com.cartrawler.assessment.util.CarsUtils.filterFullAboveMedianPrice;
 import static com.cartrawler.assessment.util.CarsUtils.median;
 import static com.cartrawler.assessment.util.CarsUtils.removeDuplicates;
@@ -22,16 +24,10 @@ public class CarsUtilsTest {
         CarResult duplicate = new CarResult("A", "SUP", "CDMR", 20, FULLFULL);
         CarResult car2 = new CarResult("B", "OTH", "EDMR", 30, CarResult.FuelPolicy.FULLEMPTY);
 
-        List<CarResult> out = removeDuplicates(List.of(car1, duplicate, car2), CarsUtils::compositeKey);
+        List<CarResult> out = removeDuplicates(List.of(car1, duplicate, car2));
 
         assertThat(out).hasSize(2)
                 .containsExactly(car1, car2);
-    }
-
-    @Test
-    public void testCompositeKey() {
-        CarResult car = new CarResult("Desc", "SUP", "ABCD", 10, FULLFULL);
-        assertThat(compositeKey(car)).isEqualTo("SUP|Desc|ABCD|FULLFULL");
     }
 
     @Test

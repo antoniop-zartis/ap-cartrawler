@@ -42,16 +42,16 @@ The goal is to process a static dataset of car results to produce a clean, order
 ## Decision Making Process
 
 * **Duplicate Removal:**  
-  Leveraging `LinkedHashMap<String, CarResult>` keyed by a composite string (`supplier|description|sipp|fuelPolicy`) to both **deduplicate** and **preserve insertion order** of the entries.
+  Uses a `LinkedHashSet<CarResult>` in `CarsUtils.removeDuplicates(...)`, leveraging `CarResult`’s overridden `equals` and `hashCode` to drop duplicates while preserving the first occurrence’s order.
 
 * **Corporate Segmentation:**  
   The `Supplier` **enum** exposes an `isCorporate(String)` helper; it filters on that predicate to split corporate vs non-corporate suppliers.
 
 * **Category Grouping:**  
-  The `Category` **enum** exposes a `fromSipp(sippCode)` (an enum method) to map the first character of the SIPP code (`M`, `E`, `C`, others) to the category names. Grouping is done by streaming over a fixed category list so that empty categories still respect the overall order.
+  The `Category` **enum** exposes a `fromSipp(String)` method to map the first character of the SIPP code (`M`, `E`, `C`, others) to category labels. Grouping is done by streaming over a fixed category list so that even empty categories maintain ordering.
 
 * **Cost Sorting:**  
-  `sorted(Comparator.comparingDouble(CarResult::getRentalCost))` it's used to ensure ascending cost order within each category.
+  Uses `.sorted(Comparator.comparingDouble(CarResult::getRentalCost))` to ensure ascending rental cost within each category.
 
 * **Final Assembly:**  
-  By concatenating the sorted streams for corporate and non-corporate, we guarantee the overall ordering of the final output.
+  Concatenates the sorted corporate and non-corporate streams to produce the final ordered list.

@@ -8,38 +8,17 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CarsUtils {
 
-    public static <T> List<T> removeDuplicates(
-            Collection<T> items,
-            Function<T, String> keyFn
-    ) {
-        Map<String, T> unique = new LinkedHashMap<>();
-        for (T item : items) {
-            unique.putIfAbsent(keyFn.apply(item), item);
-        }
-        return new ArrayList<>(unique.values());
-    }
-
-    /**
-     * Generates a composite key for a CarResult based on its
-     * supplierName, description, sippCode, and fuelPolicy.
-     */
-    public static String compositeKey(CarResult car) {
-        return car.getSupplierName() + "|"
-                + car.getDescription() + "|"
-                + car.getSippCode() + "|"
-                + car.getFuelPolicy();
+    public static List<CarResult> removeDuplicates(List<CarResult> cars) {
+        return new ArrayList<>(new LinkedHashSet<>(cars));
     }
 
     /**

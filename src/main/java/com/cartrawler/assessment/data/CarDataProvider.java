@@ -2,11 +2,12 @@ package com.cartrawler.assessment.data;
 
 import com.cartrawler.assessment.car.CarResult;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CarDataProvider {
-    public static HashSet<CarResult> loadAllCars() {
-        final var cars = new HashSet<CarResult>();
+    public static List<CarResult> loadAllCars() {
+        final var cars = new ArrayList<CarResult>();
         cars.add(new CarResult("Volkswagen Polo", "NIZA", "EDMR", 12.81d, CarResult.FuelPolicy.FULLEMPTY));
         cars.add(new CarResult("Ford C-Max Diesel", "NIZA", "CMMD", 22.04d, CarResult.FuelPolicy.FULLEMPTY));
         cars.add(new CarResult("Renault Scenic Diesel", "NIZA", "JGAD", 93.67d, CarResult.FuelPolicy.FULLEMPTY));
